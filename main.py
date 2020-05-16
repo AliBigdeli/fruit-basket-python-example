@@ -14,7 +14,7 @@ Area = size[0]* size[1]
 
 # Splitting channels from image
 
-fig, axes = plt.subplots(1, 3)
+fig, axes = plt.subplots(1, 4)
  
 # image[:, :, 0] is R channel, replace the rest by 0.
 imageR = image.copy()
@@ -33,9 +33,25 @@ imageB = image.copy()
 imageB[:, :, 0:2] = 0
 axes[2].set_title('B channel')
 axes[2].imshow(imageB)
+
+image_org = image.copy()
+axes[3].set_title('merged channel')
+axes[3].imshow(image_org)
+#plt.show()
 plt.savefig('RGB_color.png')
 plt.clf()
 
+# rgb splittig and merging
+b, g, r = cv2.split(image)
+#cv2.imshow("blue",b)
+cv2.imwrite("channels/blue channel.jpg",b )
+#cv2.imshow("green",g)
+cv2.imwrite("channels/green channel.jpg",g )
+#cv2.imshow("red",r)
+cv2.imwrite("channels/red channel.jpg",r )
+bgr = cv2.merge([b, g, r])
+#cv2.imshow("RGB merged",bgr)
+cv2.imwrite("channels/merged RGB.jpg",bgr )
 
 # calculations
 print ("image Area: ",Area)
@@ -179,11 +195,20 @@ def RGB_TO_HSI(img):
             return hue
 
         #Merge channels into picture and return image
-        hsi = cv2.merge((calc_hue(red, blue, green), calc_saturation(red, blue, green), calc_intensity(red, blue, green)))
-        return hsi
+        H = calc_hue(red, blue, green)
+        S = calc_saturation(red, blue, green)
+        I = calc_intensity(red, blue, green)
+        hsi = cv2.merge((H,S ,I ))
 
-HSI_Image = RGB_TO_HSI(image)
-#cv2.imshow("HSI Image.png",HSI_Image )
+        return hsi ,H,S
+
+HSI_Image,H,S = RGB_TO_HSI(image)
+cv2.imshow("HSI Image.png",HSI_Image )
 #cv2.imwrite("HSIImage.png", HSI_Image)
+cv2.imshow("H",H )
+#cv2.imwrite("H.png",H)
+cv2.imshow("S",S )
+#cv2.imwrite("S.png",S )
+
 
 cv2.waitKey(0)
